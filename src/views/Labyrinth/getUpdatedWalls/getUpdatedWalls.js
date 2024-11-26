@@ -2,6 +2,7 @@ import { pixelPath } from "../../../utils/utils";
 
 const getUpdatedWalls = (fromPixel, toPixel) => {
   // console.log(toPixel);
+  console.log("getUpdatedWalls");
   fromPixel.style.backgroundColor = pixelPath;
   toPixel.style.backgroundColor = pixelPath;
   if (

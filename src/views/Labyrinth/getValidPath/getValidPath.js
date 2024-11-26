@@ -10,11 +10,11 @@ const getValidPath = async (pixelRef, pixelObj, path, visited) => {
     { dx: 0, dy: -1, border: "borderLeft" }, // Left
     { dx: 0, dy: 1, border: "borderRight" }, // Right
   ];
-
-  const { x, y, currentPixel, size } = pixelObj;
+  await timeout(10);
+  const { x, y, currentPixel, size } = await pixelObj;
 
   if (x === size - 1 && y === size - 1) {
-    console.log("exit found");
+    // console.log("exit found");
     return true;
   }
 
@@ -25,7 +25,7 @@ const getValidPath = async (pixelRef, pixelObj, path, visited) => {
     await timeout(10);
     if (newX >= 0 && newX < size && newY >= 0 && newY < size) {
       const nextPixel = pixelRef.current[newKey];
-
+      // console.log("searching");
       if (
         currentPixel.style[border] === "none" &&
         visited[newX][newY] === false
@@ -36,21 +36,26 @@ const getValidPath = async (pixelRef, pixelObj, path, visited) => {
         pixelObj.x = newX;
         pixelObj.y = newY;
         pixelObj.currentPixel = nextPixel;
+        ++pixelObj.length;
 
         // visitedButStillValid(nextPixel);
         visitedButStillValid(nextPixel);
-        updateCurrentPixelState(nextPixel);
-
+        await updateCurrentPixelState(nextPixel);
         // Recurse
         const found = await getValidPath(pixelRef, pixelObj, path, visited);
         if (found) return true;
 
         // Backtrack
-        path.pop();
+        await path.pop();
         visited[newX][newY] = false;
         badPath(nextPixel);
       }
     }
+  }
+  // console.log("*** -22 -getValidPath.js *** path.length ==> ", path.length);
+  if (path.length === 1 && x === 0 && y === 0) {
+    // console.log("Failed to find exit.");
+    return false;
   }
 
   return false;

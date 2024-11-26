@@ -6,7 +6,8 @@ import { shuffle } from "lodash";
 import MakeLabyrinth from "./MakeLabyrinth/MakeLabyrinth";
 import ReturnPixel from "./ReturnPixel/ReturnPixel";
 import getNeighbors from "./getNeighbors/getNeighbors";
-import getUpdatedWalls from "./getUpdatedWalls/getUpdatedWalls";
+import fiftyFiftyWall from "./fifityFiftyWall/fifityFiftyWall";
+// import getUpdatedWalls from "./getUpdatedWalls/getUpdatedWalls";
 import getValidPath from "./getValidPath/getValidPath";
 import updateCurrentPixelState from "./updateCurrentPixelState/updateCurrentPixelState";
 
@@ -15,6 +16,7 @@ const Labyrinth = forwardRef(() => {
   const [running, setRunning] = useState(false);
   const [pixels] = useState(MakeLabyrinth());
   const [mazeCompleted, setMazeCompleted] = useState(false);
+  const tracker = [];
 
   const pixelComponents = [];
 
@@ -75,63 +77,68 @@ const Labyrinth = forwardRef(() => {
   renderLabyrinth();
 
   const generateMaze = async () => {
-    if (running) return;
+    for (let i = 0; i < 1000; i++) {
+      console.log(i + 1);
+      if (running) return;
 
-    //reset labyrinth
-    resetLabyrinth();
-    await timeout(1);
+      //reset labyrinth
+      await resetLabyrinth();
+      await timeout(10);
 
-    //redraw labyrinth
-    renderLabyrinth();
+      //redraw labyrinth
+      await renderLabyrinth();
 
-    setRunning(true);
-    const stack = [];
+      setRunning(true);
+      const stack = [];
 
-    //1 initial pixel
-    const currentPixel = pixelRef.current["0-0"];
+      //1 initial pixel
+      const currentPixel = pixelRef.current["0-0"];
 
-    //2 mark current cell as visited
-    currentPixel.setAttribute("data-visited", "true");
+      //2 mark current cell as visited
+      currentPixel.setAttribute("data-visited", "true");
 
-    //3 push it to the stack
-    stack.push(currentPixel);
+      //3 push it to the stack
+      stack.push(currentPixel);
 
-    //4 while the stack is not empty
-    while (stack.length > 0) {
-      //a. pop a cell from the stack and make it a current cell
-      const current = stack.pop();
+      //4 while the stack is not empty
+      while (stack.length > 0) {
+        //a. pop a cell from the stack and make it a current cell
+        const current = await stack.pop();
 
-      //find neighbors
-      const nbs = getNeighbors(
-        pixelRef,
-        size,
-        parseInt(current.getAttribute("x"), 10),
-        parseInt(current.getAttribute("y"), 10),
-      );
+        //find neighbors
+        const nbs = getNeighbors(
+          pixelRef,
+          size,
+          parseInt(current.getAttribute("x"), 10),
+          parseInt(current.getAttribute("y"), 10),
+        );
 
-      //b. if the current cell has any neighbors which have not been visited
-      if (nbs && nbs.length > 0) {
-        //i. push the current pixel ot the stack
-        stack.push(current);
-
-        //ii. choose an unvisited neighbor
-        shuffle(nbs);
-        const curNb = sample(nbs);
-        // console.log(current, curNb);
-
-        //iii. remove the wall between the current cell and the chosen cel.
-        getUpdatedWalls(current, curNb);
-
-        curNb.setAttribute("data-visited", "true");
-        await timeout(10);
-        stack.push(curNb);
+        //b. if the current cell has any neighbors which have not been visited
+        if (nbs && nbs.length > 0) {
+          //i. push the current pixel ot the stack
+          stack.push(current);
+          // //ii. choose an unvisited neighbor
+          shuffle(nbs);
+          const curNb = await sample(nbs);
+          // console.log(current, curNb);
+          // //iii. remove the wall between the current cell and the chosen cel.
+          fiftyFiftyWall(current, curNb);
+          // getUpdatedWalls(current, curNb);
+          curNb.setAttribute("data-visited", "true");
+          // await timeout(10);
+          stack.push(curNb);
+        }
       }
+      setMazeCompleted(true);
+      setRunning(false);
+      await traverseLabyrinth(i);
+      // await traverseLabyrinth();
+      await timeout(10);
     }
-    setMazeCompleted(true);
-    setRunning(false);
+    console.log(`*** tracker ==> ` + JSON.stringify(tracker));
   };
 
-  const traverseLabyrinth = async () => {
+  const traverseLabyrinth = async (counter) => {
     if (running) return;
     setRunning(true);
     const visited = Array.from({ length: size }, () => Array(size).fill(false));
@@ -142,14 +149,32 @@ const Labyrinth = forwardRef(() => {
       y: 0,
       currentPixel: pixelRef.current["0-0"],
       size,
+      length: 0,
     };
     await updateCurrentPixelState(pixelObj.currentPixel);
 
     for (let i = 0; i < size; i++) {
-      getValidPath(pixelRef, pixelObj, path, visited);
-      console.log(`*** pixelObj.x, pixelObj.y ==> ` + pixelObj.x, pixelObj.y);
+      if ((await getValidPath(pixelRef, pixelObj, path, visited)) === false) {
+        // console.log("failed to find exit");
+        tracker.push({
+          run: counter++,
+          result: "failed",
+          maxLen: pixelObj.length,
+        });
+        setRunning(false);
+        break;
+      } else {
+        tracker.push({
+          run: counter++,
+          result: "success",
+          maxLen: pixelObj.length,
+        });
+        setRunning(false);
+      }
+      await timeout(10);
+      // console.log(`*** pixelObj.x, pixelObj.y ==> ` + pixelObj.x, pixelObj.y);
     }
-    setRunning(false);
+    await timeout(10);
   };
 
   return (
