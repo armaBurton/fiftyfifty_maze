@@ -21,62 +21,62 @@ button {
   justify-content: center;
 }
 
-/* nav {
-  display: flex;
+ul {
+  list-style-type: none;
+}
 
+.appContainer {
+  min-height: 100vh;
+  display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
-  min-height: 100vh;
-} */
-
-.appContainer {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
 }
 
 nav {
+  padding-left: 30px;
   /* width: 200px; */
   /* height: 100vh; */
-  min-width: 150px;
+  /* min-width: 150px;
   padding-left: 30px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   text-decoration: none;
   font-size: 1.5em;
+  min-height: 100%; */
 }
 
 p {
   margin-bottom: 10px;
 }
 
-.navLinks > li {
+.navLinks>li {
   margin-bottom: 20px;
+  min-height: 100%
 }
 
-.navLinks > li > .links {
+.navLinks>li>.links {
   text-decoration: none;
   font-weight: 900;
   color: var(--rose);
 }
 
-.navLinks > li > .links:hover {
+.navLinks>li>.links:hover {
   color: var(--emerald);
 }
 
-.navLinks > li > .links:active {
+.navLinks>li>.links:active {
   color: var(--hookers-green);
 }
+
 /* 
 .navLinks > li > .links:visited {
   color: var(--tyrian-purple);
 } */
 
 .title {
+  position: absolute;
   color: var(--rose);
   padding-top: 10px;
   padding-left: 30px;
@@ -103,8 +103,10 @@ p {
 
 .contentContainer {
   width: 1250px;
-  height: auto;
+  min-height: 100%;
   display: flex;
+  align-items: center;
+  justify-content: center;
   /* display: flex; */
 }
 
@@ -119,6 +121,7 @@ p {
 .mazeViewer {
   display: flex;
   flex-direction: row;
+  align-items: center;
   /* width: 50px; */
   /* background-color: yellow; */
 }

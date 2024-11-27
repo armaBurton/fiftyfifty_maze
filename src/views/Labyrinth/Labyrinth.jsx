@@ -10,7 +10,7 @@ import fiftyFiftyWall from "./fifityFiftyWall/fifityFiftyWall";
 // import getUpdatedWalls from "./getUpdatedWalls/getUpdatedWalls";
 import getValidPath from "./getValidPath/getValidPath";
 import updateCurrentPixelState from "./updateCurrentPixelState/updateCurrentPixelState";
-import SideBar from "./SideBar/SideBar";
+// import SideBar from "./SideBar/SideBar";
 
 const Labyrinth = forwardRef(({ size }) => {
   const pixelRef = useRef({});

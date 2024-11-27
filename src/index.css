@@ -19,7 +19,7 @@
   padding: 0;
   font-family: "Funnel Display", sans-serif;
   text-decoration: none;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
 body {
@@ -36,6 +36,7 @@ body {
   from {
     background-color: var(--Claret);
   }
+
   to {
     background-color: var(--hookers-green);
   }
