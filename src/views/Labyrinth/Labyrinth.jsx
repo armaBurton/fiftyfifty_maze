@@ -1,6 +1,6 @@
 import React, { useState, forwardRef, useRef } from "react";
 import { timeout } from "../../utils/utils";
-import { length, size, mazeBkgnd, mazeBorder } from "../../utils/utils";
+import { length, mazeBkgnd, mazeBorder } from "../../utils/utils";
 import sample from "lodash/sample";
 import { shuffle } from "lodash";
 import MakeLabyrinth from "./MakeLabyrinth/MakeLabyrinth";
@@ -10,13 +10,18 @@ import fiftyFiftyWall from "./fifityFiftyWall/fifityFiftyWall";
 // import getUpdatedWalls from "./getUpdatedWalls/getUpdatedWalls";
 import getValidPath from "./getValidPath/getValidPath";
 import updateCurrentPixelState from "./updateCurrentPixelState/updateCurrentPixelState";
+import SideBar from "./SideBar/SideBar";
 
-const Labyrinth = forwardRef(() => {
+const Labyrinth = forwardRef(({ size }) => {
   const pixelRef = useRef({});
   const [running, setRunning] = useState(false);
   const [pixels] = useState(MakeLabyrinth());
   const [mazeCompleted, setMazeCompleted] = useState(false);
   const tracker = [];
+
+  // useEffect(() => {
+  //   renderLabyrinth();
+  // }, [size, pixels]);
 
   const pixelComponents = [];
 
@@ -47,6 +52,15 @@ const Labyrinth = forwardRef(() => {
   };
 
   const renderLabyrinth = async () => {
+    pixelComponents.length = 0;
+    // const gridContainer = document.querySelector(".mazeContainer");
+    // if (gridContainer) {
+    //   gridContainer.style.display = "none";
+    //   const temp = gridContainer.offsetHeight;
+    //   gridContainer.style.display = "grid";
+    // }
+    // console.log("Rendering Labyrinth with size:", size);
+
     for (let x = 0; x < size; x++) {
       for (let y = 0; y < size; y++) {
         pixelComponents.push(
@@ -77,7 +91,7 @@ const Labyrinth = forwardRef(() => {
   renderLabyrinth();
 
   const generateMaze = async () => {
-    for (let i = 0; i < 1000; i++) {
+    for (let i = 0; i < 10; i++) {
       console.log(i + 1);
       if (running) return;
 
@@ -184,6 +198,7 @@ const Labyrinth = forwardRef(() => {
           style={{
             display: "grid",
             gridTemplateColumns: `repeat(${size}, ${length / size}px)`,
+            gridTemplateRows: `repeat(${size}, ${length / size}px)`,
             backgroundColor: "var( --maze-bkgnd-init)",
           }}
         >
@@ -193,13 +208,14 @@ const Labyrinth = forwardRef(() => {
       <button className="mazeButton" onClick={() => generateMaze()}>
         Generate Maze
       </button>
-      {mazeCompleted ? (
+      {/* <SideBar /> */}
+      {/* {mazeCompleted ? (
         <button className="mazeButton" onClick={() => traverseLabyrinth()}>
           Traverse
         </button>
       ) : (
         ""
-      )}
+      )} */}
     </>
   );
 });
