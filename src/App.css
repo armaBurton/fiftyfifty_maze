@@ -25,6 +25,18 @@ ul {
   list-style-type: none;
 }
 
+a {
+  color: var(--hookers-green)
+}
+
+a:hover {
+  color: var(--rose-red)
+}
+
+a:active {
+  color: var(--rose)
+}
+
 .appContainer {
   min-height: 100vh;
   display: flex;
@@ -35,16 +47,10 @@ ul {
 
 nav {
   padding-left: 30px;
-  /* width: 200px; */
-  /* height: 100vh; */
-  /* min-width: 150px;
-  padding-left: 30px;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  text-decoration: none;
-  font-size: 1.5em;
-  min-height: 100%; */
+}
+
+.disclaimer {
+  color: var(--rose)
 }
 
 p {
@@ -57,9 +63,16 @@ p {
 }
 
 .navLinks>li>.links {
-  text-decoration: none;
   font-weight: 900;
   color: var(--rose);
+}
+
+ul {
+  text-decoration: none;
+}
+
+ol>li {
+  margin-bottom: 10px;
 }
 
 .navLinks>li>.links:hover {
@@ -70,10 +83,12 @@ p {
   color: var(--hookers-green);
 }
 
-/* 
-.navLinks > li > .links:visited {
-  color: var(--tyrian-purple);
-} */
+.codeBlock {
+  color: var(--rose);
+  font-style: italic;
+  font-family: 'Courier Prime';
+  font-size: .95em;
+}
 
 .title {
   position: absolute;
@@ -122,25 +137,25 @@ p {
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* width: 50px; */
-  /* background-color: yellow; */
+}
+
+.displayArea {
+  display: flex;
+  margin-top: 50px;
+  align-items: center;
+
+
 }
 
 .sideBar {
   margin-left: 50px;
   min-width: 100px;
   height: 100%;
-  /* background-color: yellow; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   color: var(--rose);
 }
-
-/* .mazeSection {
-  display: flex;
-  flex-direction: row;
-} */
 
 .cellComponent {
   display: flex;

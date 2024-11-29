@@ -26,6 +26,14 @@ const Navbar = () => {
             5x5 Maze
           </Link>
         </li>
+        <li>
+          <Link className="links" to="/asComplex">Asymptotic Complexity
+          </Link>
+        </li>
+        <li>
+          <Link className="links" to="/Resources">Resources
+          </Link>
+        </li>
       </ul>
     </nav>
   );

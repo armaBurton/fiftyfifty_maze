@@ -7,16 +7,12 @@ import TwoByTwo from "./TwoByTwo/TwoByTwo";
 import ThreeByThree from "./ThreeByThree/ThreeByThree";
 import FiveByFive from "./FiveByFive/FiveByFive";
 import Home from "./views/Home/Home";
-// import { size } from "./utils/utils";
 import TitleBlock from "./views/TitleBlock/TitleBlock";
-// import Labyrinth from "./views/Labyrinth/Labyrinth";
 import Navbar from "./views/Navbar/Navbar";
-
-// const Home = () => {};
-// const FiveByFive = () => {};
+import AsComplex from "./AsComplex/AsComplex";
+import Resources from "./Resources/Resources";
 
 function App() {
-  // const url = window.location.href;
   return (
     <>
       <TitleBlock />
@@ -30,6 +26,8 @@ function App() {
               <Route path="/2x2" element={<TwoByTwo />} />
               <Route path="/3x3" element={<ThreeByThree />} />
               <Route path="/5x5" element={<FiveByFive />} />
+              <Route path="/asComplex" element={<AsComplex />} />
+              <Route path="/resources" element={<Resources />} />
             </Routes>
           </div>
         </div>{" "}

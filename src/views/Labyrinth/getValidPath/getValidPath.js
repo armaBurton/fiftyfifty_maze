@@ -10,22 +10,20 @@ const getValidPath = async (pixelRef, pixelObj, path, visited) => {
     { dx: 0, dy: -1, border: "borderLeft" }, // Left
     { dx: 0, dy: 1, border: "borderRight" }, // Right
   ];
-  await timeout(10);
+  await timeout(1);
   const { x, y, currentPixel, size } = await pixelObj;
 
   if (x === size - 1 && y === size - 1) {
-    // console.log("exit found");
     return true;
   }
-
+  await timeout(1)
   for (const { dx, dy, border } of directions) {
     const newX = x + dx;
     const newY = y + dy;
     const newKey = `${newX}-${newY}`;
-    await timeout(10);
+    await timeout(1);
     if (newX >= 0 && newX < size && newY >= 0 && newY < size) {
       const nextPixel = pixelRef.current[newKey];
-      // console.log("searching");
       if (
         currentPixel.style[border] === "none" &&
         visited[newX][newY] === false
@@ -38,7 +36,6 @@ const getValidPath = async (pixelRef, pixelObj, path, visited) => {
         pixelObj.currentPixel = nextPixel;
         ++pixelObj.length;
 
-        // visitedButStillValid(nextPixel);
         visitedButStillValid(nextPixel);
         await updateCurrentPixelState(nextPixel);
         // Recurse
@@ -52,11 +49,7 @@ const getValidPath = async (pixelRef, pixelObj, path, visited) => {
       }
     }
   }
-  // console.log("*** -22 -getValidPath.js *** path.length ==> ", path.length);
-  if (path.length === 1 && x === 0 && y === 0) {
-    // console.log("Failed to find exit.");
-    return false;
-  }
+
 
   return false;
 };

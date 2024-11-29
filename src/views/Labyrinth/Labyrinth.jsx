@@ -16,17 +16,22 @@ const Labyrinth = forwardRef(({ size }) => {
   const pixelRef = useRef({});
   const [running, setRunning] = useState(false);
   const [pixels] = useState(MakeLabyrinth());
-  const [mazeCompleted, setMazeCompleted] = useState(false);
+  // const [mazeCompleted, setMazeCompleted] = useState(false);
+  const [simulating, setSimulating] = useState(false);
+  // const [iterations, setIterations] = useState(0);
+  const [success, setSuccess] = useState(0);
+  const [failure, setFailure] = useState(0);
+  const [ratio, setRatio] = useState(0);
+  // const [maxLength, setMaxLength] = useState(0);
+  const [stateObj, setStateObj] = useState([{}])
+
   const tracker = [];
 
-  // useEffect(() => {
-  //   renderLabyrinth();
-  // }, [size, pixels]);
 
   const pixelComponents = [];
 
   const resetLabyrinth = async () => {
-    setMazeCompleted(false);
+    // setMazeCompleted(false);
     for (let x = 0; x < size; x++) {
       for (let y = 0; y < size; y++) {
         pixelRef.current[`${x}-${y}`].style.borderTop =
@@ -53,13 +58,6 @@ const Labyrinth = forwardRef(({ size }) => {
 
   const renderLabyrinth = async () => {
     pixelComponents.length = 0;
-    // const gridContainer = document.querySelector(".mazeContainer");
-    // if (gridContainer) {
-    //   gridContainer.style.display = "none";
-    //   const temp = gridContainer.offsetHeight;
-    //   gridContainer.style.display = "grid";
-    // }
-    // console.log("Rendering Labyrinth with size:", size);
 
     for (let x = 0; x < size; x++) {
       for (let y = 0; y < size; y++) {
@@ -91,10 +89,12 @@ const Labyrinth = forwardRef(({ size }) => {
   renderLabyrinth();
 
   const generateMaze = async () => {
-    for (let i = 0; i < 10; i++) {
-      console.log(i + 1);
+    resetCounts()
+    setStateObj([])
+    setSimulating(true)
+    for (let i = 0; i < 1000; i++) {
       if (running) return;
-
+      console.log(`>>>97 >>>i--->    `, i)
       //reset labyrinth
       await resetLabyrinth();
       await timeout(10);
@@ -134,25 +134,41 @@ const Labyrinth = forwardRef(({ size }) => {
           // //ii. choose an unvisited neighbor
           shuffle(nbs);
           const curNb = await sample(nbs);
-          // console.log(current, curNb);
           // //iii. remove the wall between the current cell and the chosen cel.
           fiftyFiftyWall(current, curNb);
-          // getUpdatedWalls(current, curNb);
           curNb.setAttribute("data-visited", "true");
-          // await timeout(10);
           stack.push(curNb);
         }
       }
-      setMazeCompleted(true);
+
+      // setMazeCompleted(true);
       setRunning(false);
       await traverseLabyrinth(i);
-      // await traverseLabyrinth();
-      await timeout(10);
     }
-    console.log(`*** tracker ==> ` + JSON.stringify(tracker));
+
+    let fail = 0;
+    let succ = 0;
+    for (let i = 0; i < tracker.length; i++) {
+      tracker[i].result === "failed" ? ++fail : ++succ
+    }
+
+    while (tracker.length > 0) {
+      console.log(tracker.length);
+      tracker.pop();
+    }
+
+    setSimulating(false)
   };
 
+  const resetCounts = async () => {
+    // setIterations(0)
+    setFailure(0)
+    setSuccess(0)
+    setRatio(0)
+  }
+
   const traverseLabyrinth = async (counter) => {
+    // setIterations(parseInt(counter))
     if (running) return;
     setRunning(true);
     const visited = Array.from({ length: size }, () => Array(size).fill(false));
@@ -169,53 +185,86 @@ const Labyrinth = forwardRef(({ size }) => {
 
     for (let i = 0; i < size; i++) {
       if ((await getValidPath(pixelRef, pixelObj, path, visited)) === false) {
-        // console.log("failed to find exit");
+        const trackingObj = { run: counter++, result: "failed", maxLen: pixelObj.length }
+        // stateObj[ ...stateObj, trackingObj]
+        setStateObj((prev) => [...prev, trackingObj])
         tracker.push({
           run: counter++,
           result: "failed",
           maxLen: pixelObj.length,
         });
+        await timeout(1)
         setRunning(false);
         break;
       } else {
+        const trackingObj = { run: counter++, result: "success", maxLen: pixelObj.length }
+        setStateObj((prev) => [...prev, trackingObj])
         tracker.push({
           run: counter++,
           result: "success",
           maxLen: pixelObj.length,
         });
+        await timeout(1)
         setRunning(false);
+        await timeout(1)
       }
-      await timeout(10);
-      // console.log(`*** pixelObj.x, pixelObj.y ==> ` + pixelObj.x, pixelObj.y);
     }
-    await timeout(10);
+
+    await timeout(1);
   };
+
+  const reportData = async () => {
+    resetCounts()
+
+    let successCount = 0;
+    let failCount = 0;
+
+    stateObj.forEach((obj) => {
+      if (obj.result === "success") {
+        successCount++
+      } else {
+        failCount++
+      }
+
+    })
+    setSuccess(successCount)
+    setFailure(failCount)
+    const rat = (successCount / failCount).toFixed(4)
+    setRatio(rat)
+  }
 
   return (
     <>
-      <div className="mazeContainer">
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: `repeat(${size}, ${length / size}px)`,
-            gridTemplateRows: `repeat(${size}, ${length / size}px)`,
-            backgroundColor: "var( --maze-bkgnd-init)",
-          }}
-        >
-          {pixelComponents}
+      <div>
+        <p className="disclaimer">may not run correctly on first simulation</p>
+        <div className="displayArea">
+          <div className="mazeContainer">
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${size}, ${length / size}px)`,
+                gridTemplateRows: `repeat(${size}, ${length / size}px)`,
+                backgroundColor: "var( --maze-bkgnd-init)",
+              }}
+            >
+              {pixelComponents}
+            </div>
+          </div>
+          <div className="sideBar">
+            {/* <h2>iterations: {iterations}</h2> */}
+
+            <h2>success: {simulating ? "simulating" : success}</h2>
+            <h2>failure: {simulating ? "simulating" : failure}</h2>
+            <h2>ratio: {simulating ? "simulating" : ratio}</h2>
+          </div>
         </div>
-      </div>
-      <button className="mazeButton" onClick={() => generateMaze()}>
-        Generate Maze
-      </button>
-      {/* <SideBar /> */}
-      {/* {mazeCompleted ? (
-        <button className="mazeButton" onClick={() => traverseLabyrinth()}>
-          Traverse
+        <button className="mazeButton" onClick={async () => {
+          await generateMaze()
+          await reportData()
+        }}>
+          Run Simulation
         </button>
-      ) : (
-        ""
-      )} */}
+      </div>
     </>
   );
 });
