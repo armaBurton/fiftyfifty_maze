@@ -1,5 +1,4 @@
 import Labyrinth from "../views/Labyrinth/Labyrinth";
-import SideBar from "../views/Labyrinth/SideBar/SideBar";
 
 const ThreeByThree = () => {
   return (
@@ -7,7 +6,6 @@ const ThreeByThree = () => {
       <section className="mazeSection">
         <Labyrinth size={3} />
       </section>
-      {/* <SideBar /> */}
     </div>
   );
 };

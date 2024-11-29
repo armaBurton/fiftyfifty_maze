@@ -1,6 +1,6 @@
 //github.com/Xinecraft/react-maze-generator
-import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router";
 import "./index.css";
 import "./App.css";
 import TwoByTwo from "./TwoByTwo/TwoByTwo";
